@@ -99,14 +99,17 @@ PROCESS {
                     $logSplit = $logContent[$i].Split(" ")
                     # If the log line date is sooner than the modified date we set, add subnet to array
                     if ($logSplit[0] -ge $dateOldest) {
-                    # Add Date, Client, User, IP, Domain, and Error to the array
-                        $noClientSiteIP += [PSCustomObject]@{
-                            Date = $logSplit[0];
-                            Client = $logSplit[3];
-                            User = $logSplit[6];
-                            Domain = $logSplit[4];
-                            Error = $logSplit[5];
-                            IPAddress = $logSplit[7]
+                        # Check if the error message is for NO_CLIENT_SITE
+                        if ($logSplit[5] -like '*NO_CLIENT_SITE*') {
+                            # Add Date, Client, User, IP, Domain, and Error to the array
+                            $noClientSiteIP += [PSCustomObject]@{
+                                Date = $logSplit[0];
+                                Client = $logSplit[3];
+                                User = $logSplit[6];
+                                Domain = $logSplit[4];
+                                Error = $logSplit[5];
+                                IPAddress = $logSplit[7]
+                            }
                         }
                     } else { 
                         # Once log is looped through to a date out of the range, break the loop
